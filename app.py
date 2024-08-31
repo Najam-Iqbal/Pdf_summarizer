@@ -73,7 +73,7 @@ def extract_key_terms_nltk(text, top_n=10):
     common_terms = fdist.most_common(top_n)
     return [term for term, _ in common_terms]
 
-deef generate_pdf(output_path, pages):
+def generate_pdf(output_path, pages):
     doc = SimpleDocTemplate(output_path, pagesize=letter)
     styles = getSampleStyleSheet()
     flowables = []
