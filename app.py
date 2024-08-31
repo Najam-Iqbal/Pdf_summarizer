@@ -1,5 +1,4 @@
  import os
-from google.colab import files
 import fitz  # PyMuPDF
 import nltk
 from reportlab.lib.pagesizes import letter
@@ -15,9 +14,7 @@ nltk.download('averaged_perceptron_tagger')
 nltk.download('wordnet')
 
 # Import Groq API
-from groq import Groq
-from google.colab import userdata
-GROQ_API_KEY=userdata.get('groq_Api')
+GROQ_API_KEY=st.secret.key.groq_Api
 
 client = Groq(api_key=GROQ_API_KEY)
 
