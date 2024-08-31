@@ -36,7 +36,7 @@ def summarize_text(text, model="llama-3.1-70b-versatile"):
     )
     return chat_completion.choices[0].message.content
 
-def extract_key_terms_llama(text, model="llama3-8b-8192", max_terms=10):
+def extract_key_terms_llama(text, model="llama-3.1-70b-versatile", max_terms=10):
     prompt = (
         "Extract the top {} key terms or phrases from the following text:\n\n"
         "\"\"\"\n"
@@ -53,6 +53,15 @@ def extract_key_terms_llama(text, model="llama3-8b-8192", max_terms=10):
     key_terms = [term.strip() for term in response.split(",")]
     return key_terms
 
+def extract_key_terms_nltk(text, top_n=10):
+    words = nltk.word_tokenize(text.lower())
+    words = [word for word in words if word.isalpha() and word not in nltk.corpus.stopwords.words('english')]
+    tagged_words = nltk.pos_tag(words)
+    key_terms = [word for word, pos in tagged_words if pos in ['NN', 'NNS', 'NNP', 'NNPS']]
+    fdist = nltk.FreqDist(key_terms)
+    common_terms = fdist.most_common(top_n)
+    return [term for term, _ in common_terms]
+
 def get_word_meaning(word):
     synsets = nltk.corpus.wordnet.synsets(word)
     if synsets:
@@ -61,7 +70,10 @@ def get_word_meaning(word):
 
 def process_text(text, use_llama=False, top_n=10):
     summary = summarize_text(text)
-    key_terms = extract_key_terms_llama(text, max_terms=top_n) if use_llama else extract_key_terms_nltk(text, top_n)
+    if use_llama:
+        key_terms = extract_key_terms_llama(text, max_terms=top_n)
+    else:
+        key_terms = extract_key_terms_nltk(text, top_n)
     meanings = {term: get_word_meaning(term) for term in key_terms}
     return summary, meanings
 
@@ -95,6 +107,7 @@ def generate_pdf(output_path, pages):
 
     # Build the PDF
     doc.build(flowables)
+
 def main():
     st.title("PDF Summarizer and Key Term Extractor")
 
