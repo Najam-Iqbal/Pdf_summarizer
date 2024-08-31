@@ -5,8 +5,10 @@ import streamlit as st
 from groq import Groq
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units  import inch
-from reportlab.platypus import Table, TableStyle, Paragraph, SimpleDocTemplate, Spacer, PageBreak
+from reportlab.lib.units  
+ import inch
+from reportlab.platypus import  
+ Table, TableStyle, Paragraph, SimpleDocTemplate, Spacer, PageBreak
 from reportlab.lib.pagesizes import letter, inch
 from xml.sax.saxutils import escape
 
@@ -112,8 +114,42 @@ def generate_pdf(output_path, pages):
 
     for page_content in pages:
         # Add summary paragraph
-        summary_
-    
+        summary_paragraph = Paragraph(page_content['summary'], style=summary_style)
+        flowables.append(summary_paragraph)
+
+        # Create table for key terms and meanings
+        data = [["Term", "Meaning"]]  # Header row
+        for term, meaning in page_content['meanings'].items():
+            data.append([term, meaning])
+
+        # Define table style
+        table_style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), (0.9, 0.9, 0.9)),  # Header background
+            ('TEXTCOLOR', (0, 0), (-1, 0), (0, 0, 0)),  # Header text color
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),  # Align text left
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), (1, 1, 1)),  # Alternate row background
+            ('GRID', (0, 0), (-1, -1), 1, (0, 0, 0)),  # Grid lines
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # Vertical alignment
+        ])
+
+        # Define column widths and create table
+        col_widths = [2.5*inch, 4.5*inch]  # Adjust column widths as needed
+        table = Table(data, colWidths=col_widths)
+        table.setStyle(table_style)
+
+        # Add table to flowables
+        flowables.append(table)
+
+        # Add page break after each page's content
+        flowables.append(PageBreak())
+
+    # Build the PDF
+    doc.build(flowables)
+
+
 def main():
     st.title("PDF Summarizer and Key Term Extractor")
 
