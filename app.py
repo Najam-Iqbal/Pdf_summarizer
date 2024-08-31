@@ -110,7 +110,7 @@ def generate_pdf(output_path, pages):
 
     flowables = []
 
-     for page_content in pages:
+    for page_content in pages:
         # Add summary paragraph
         summary_
     
