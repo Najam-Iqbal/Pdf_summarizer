@@ -5,10 +5,8 @@ import streamlit as st
 from groq import Groq
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units  
- import inch
-from reportlab.platypus import  
- Table, TableStyle, Paragraph, SimpleDocTemplate, Spacer, PageBreak
+from reportlab.lib.units  import inch
+from reportlab.platypus import Table, TableStyle, Paragraph, SimpleDocTemplate, Spacer, PageBreak
 from reportlab.lib.pagesizes import letter, inch
 from xml.sax.saxutils import escape
 
