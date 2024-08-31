@@ -28,7 +28,7 @@ def extract_text_from_pdf(pdf_path):
         texts.append(text)
     return texts
 
-def summarize_text(text, model="llama3-8b-8192"):
+def summarize_text(text, model="llama-3.1-70b-versatile"):
     chat_completion = client.chat.completions.create(
         messages=[{"role": "user", "content": text}],
         model=model,
