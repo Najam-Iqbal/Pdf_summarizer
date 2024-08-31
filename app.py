@@ -17,7 +17,7 @@ nltk.download('wordnet')
 # Import Groq API
 GROQ_API_KEY=st.secrets.key.groq_Api
 
-client = Groq(api_key=GROQ_API_KEY)
+client = GROQ_API_KEY
 
 def extract_text_from_pdf(pdf_path):
     doc = fitz.open(pdf_path)
