@@ -68,7 +68,7 @@ def get_word_meaning(word):
     if synsets:
         return synsets[0].definition()
     else:   
-    return "No definition found."
+        return "No definition found."
 
 def process_text(text, use_llama=False, top_n=10):
     summary = summarize_text(text)
