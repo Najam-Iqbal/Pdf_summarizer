@@ -2,6 +2,7 @@ import os
 import fitz  # PyMuPDF
 import nltk
 import streamlit as st
+from groq import Groq
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.styles import getSampleStyleSheet
@@ -17,8 +18,7 @@ nltk.download('wordnet')
 # Import Groq API
 GROQ_API_KEY=st.secrets.key.groq_Api
 
-client = GROQ_API_KEY
-
+client = Groq(api_key=GROQ_API_KEY)
 def extract_text_from_pdf(pdf_path):
     doc = fitz.open(pdf_path)
     texts = []
