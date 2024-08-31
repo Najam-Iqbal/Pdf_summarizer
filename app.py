@@ -5,8 +5,9 @@ import streamlit as st
 from groq import Groq
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, PageBreak, Table, TableStyle
 from reportlab.lib.units import inch
+from reportlab.platypus import Table, TableStyle, Paragraph, SimpleDocTemplate, Spacer, PageBreak
+from reportlab.lib.pagesizes import letter, inch
 from xml.sax.saxutils import escape
 
 # Install necessary NLTK data
@@ -104,30 +105,21 @@ def generate_pdf(output_path, pages):
             ('GRID', (0, 0), (-1, -1), 1, (0, 0, 0)),  # Grid lines
             ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # Vertical alignment
         ])
-        
-        # Define column widths and wrap text
+
+        # Define column widths and create table
         col_widths = [2.5*inch, 4.5*inch]  # Adjust column widths as needed
         table = Table(data, colWidths=col_widths)
         table.setStyle(table_style)
 
-        # Wrap text in table cells
-        for row in range(1, len(data)):  # Skip the header row
-            for col in range(2):  # Adjust based on the number of columns
-                cell_text = data[row][col]
-                para = Paragraph(cell_text, styles["Normal"])
-                data[row][col] = para
-
-        table._argW[0] = 2.5 * inch  # Set width for the first column
-        table._argW[1] = 4.5 * inch  # Set width for the second column
-        table.wrapOn(doc, doc.width, doc.height)
-
+        # Add table to flowables
         flowables.append(table)
 
-        flowables.append(PageBreak())  # Page break after each page's content
+        # Add page break after each page's content
+        flowables.append(PageBreak())
 
     # Build the PDF
     doc.build(flowables)
-
+    
 def main():
     st.title("PDF Summarizer and Key Term Extractor")
 
