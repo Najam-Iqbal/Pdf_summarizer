@@ -92,17 +92,35 @@ def generate_pdf(output_path, pages):
         for term, meaning in page_content['meanings'].items():
             data.append([term, meaning])
 
-        table = Table(data, colWidths=[2*inch, 4*inch])
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), (0.9, 0.9, 0.9)),
-            ('TEXTCOLOR', (0, 0), (-1, 0), (0, 0, 0)),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        # Define table style
+        table_style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), (0.9, 0.9, 0.9)),  # Header background
+            ('TEXTCOLOR', (0, 0), (-1, 0), (0, 0, 0)),  # Header text color
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),  # Align text left
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), (1, 1, 1)),
-            ('GRID', (0, 0), (-1, -1), 1, (0, 0, 0)),
-        ]))
+            ('BACKGROUND', (0, 1), (-1, -1), (1, 1, 1)),  # Alternate row background
+            ('GRID', (0, 0), (-1, -1), 1, (0, 0, 0)),  # Grid lines
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # Vertical alignment
+        ])
+        
+        # Define column widths and wrap text
+        col_widths = [2.5*inch, 4.5*inch]  # Adjust column widths as needed
+        table = Table(data, colWidths=col_widths)
+        table.setStyle(table_style)
+
+        # Wrap text in table cells
+        for row in range(1, len(data)):  # Skip the header row
+            for col in range(2):  # Adjust based on the number of columns
+                cell_text = data[row][col]
+                para = Paragraph(cell_text, styles["Normal"])
+                data[row][col] = para
+
+        table._argW[0] = 2.5 * inch  # Set width for the first column
+        table._argW[1] = 4.5 * inch  # Set width for the second column
+        table.wrapOn(doc, doc.width, doc.height)
+
         flowables.append(table)
 
         flowables.append(PageBreak())  # Page break after each page's content
