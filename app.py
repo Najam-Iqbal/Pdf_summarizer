@@ -73,7 +73,7 @@ def extract_key_terms_nltk(text, top_n=10):
     common_terms = fdist.most_common(top_n)
     return [term for term, _ in common_terms]
 
-def generate_pdf(output_path, pages):
+deef generate_pdf(output_path, pages):
     doc = SimpleDocTemplate(output_path, pagesize=letter)
     styles = getSampleStyleSheet()
     flowables = []
@@ -86,24 +86,23 @@ def generate_pdf(output_path, pages):
             para = para.replace("<i>", "*").replace("</i>", "*")
 
             # Sanitize for unclosed tags
-            from xml.sax.saxutils import escape
             para = escape(para)  # Escape any remaining HTML-like tags
 
             flowables.append(Paragraph(para, styles["Normal"]))
-            flowables.append(Spacer(1, 0.2 * inch))
-        flowables.append(PageBreak())
+            flowables.append(Spacer(1, 12))  # 12 points space between paragraphs
+        flowables.append(PageBreak())  # Page break after each page's content
 
+    # Build the PDF
     doc.build(flowables)
 def main():
     st.title("PDF Summarizer and Key Term Extractor")
-
 
     # PDF File Upload
     uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
 
     if uploaded_file is not None:
         st.write("Processing...")
-        pdf_path = uploaded_file.name
+        pdf_path = "temp_uploaded.pdf"
 
         # Save the uploaded file temporarily
         with open(pdf_path, "wb") as f:
@@ -128,7 +127,9 @@ def main():
         generate_pdf(output_pdf_path, pages)
 
         st.success("PDF generation complete! Download your file below.")
-        st.download_button("Download PDF", output_pdf_path)
+        with open(output_pdf_path, "rb") as f:
+            st.download_button("Download PDF", f, file_name=output_pdf_path)
 
 if __name__ == "__main__":
     main()
+
