@@ -9,6 +9,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, PageBreak
 from reportlab.lib.pagesizes import letter, inch # Import 'inch'
 from reportlab.pdfgen import canvas
+from xml.sax.saxutils import escape
 # Install necessary NLTK data
 nltk.download('punkt')
 nltk.download('stopwords')
