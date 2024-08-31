@@ -87,7 +87,7 @@ def main():
             f.write(uploaded_file.getbuffer())
 
         # Extract text from PDF
-        texts = extract_text_from_pdf(pdf_path)
+        texts = PdfReader(pdf_path)
 
         use_llama = st.checkbox("Use LLaMA for Key Term Extraction", value=True)
         top_n_terms = st.slider("Number of Key Terms to Extract", min_value=1, max_value=20, value=10)
