@@ -1,6 +1,7 @@
 import os
 import fitz  # PyMuPDF
 import nltk
+import streamlit as st
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.styles import getSampleStyleSheet
@@ -93,8 +94,6 @@ def generate_pdf(output_path, pages):
         flowables.append(PageBreak())
 
     doc.build(flowables)
-
-import streamlit as st
 def main():
     st.title("PDF Summarizer and Key Term Extractor")
 
