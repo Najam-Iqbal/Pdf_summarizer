@@ -22,7 +22,7 @@ client = Groq(api_key=GROQ_API_KEY)
 def extract_text_from_pdf(pdf_path):
     doc = fitz.open(pdf_path)
     texts = []
-    for page_num in range(min(100, len(doc))):  # Limit to the first 100 pages
+    for page_num in range(min(20, len(doc))):  # Limit to the first 100 pages
         page = doc.load_page(page_num)
         text = page.get_text("text")
         texts.append(text)
