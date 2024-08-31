@@ -4,9 +4,11 @@ import nltk
 import streamlit as st
 from groq import Groq
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.units import inch
-from reportlab.platypus import Table, TableStyle, Paragraph, SimpleDocTemplate, Spacer, PageBreak
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units  
+ import inch
+from reportlab.platypus import  
+ Table, TableStyle, Paragraph, SimpleDocTemplate, Spacer, PageBreak
 from reportlab.lib.pagesizes import letter, inch
 from xml.sax.saxutils import escape
 
@@ -14,12 +16,14 @@ from xml.sax.saxutils import escape
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger')
-nltk.download('wordnet')
+nltk.download('wordnet')  
+
 
 # Import Groq API
 GROQ_API_KEY = st.secrets.key.groq_Api
 
 client = Groq(api_key=GROQ_API_KEY)
+
 
 def extract_text_from_pdf(pdf_path):
     doc = fitz.open(pdf_path)
@@ -30,12 +34,14 @@ def extract_text_from_pdf(pdf_path):
         texts.append(text)
     return texts
 
+
 def summarize_text(text, model="llama-3.1-70b-versatile"):
     chat_completion = client.chat.completions.create(
         messages=[{"role": "user", "content": text}],
         model=model,
     )
     return chat_completion.choices[0].message.content
+
 
 def extract_key_terms_llama(text, model="llama-3.1-70b-versatile", max_terms=10):
     prompt = (
@@ -54,6 +60,7 @@ def extract_key_terms_llama(text, model="llama-3.1-70b-versatile", max_terms=10)
     key_terms = [term.strip() for term in response.split(",")]
     return key_terms
 
+
 def extract_key_terms_nltk(text, top_n=10):
     words = nltk.word_tokenize(text.lower())
     words = [word for word in words if word.isalpha() and word not in nltk.corpus.stopwords.words('english')]
@@ -63,14 +70,21 @@ def extract_key_terms_nltk(text, top_n=10):
     common_terms = fdist.most_common(top_n)
     return [term for term, _ in common_terms]
 
+
 def get_word_meaning(word):
     synsets = nltk.corpus.wordnet.synsets(word)
     if synsets:
         return synsets[0].definition()
     return "No definition found."
 
+
 def process_text(text, use_llama=False, top_n=10):
     summary = summarize_text(text)
+
+    # **Reduce potential bias and factual errors**
+    # - Consider incorporating human review or filtering techniques.
+    # - Fine-tune the LLM on a dataset relevant to the expected PDF content.
+
     if use_llama:
         key_terms = extract_key_terms_llama(text, max_terms=top_n)
     else:
@@ -78,47 +92,27 @@ def process_text(text, use_llama=False, top_n=10):
     meanings = {term: get_word_meaning(term) for term in key_terms}
     return summary, meanings
 
+
 def generate_pdf(output_path, pages):
     doc = SimpleDocTemplate(output_path, pagesize=letter)
     styles = getSampleStyleSheet()
+
+    # **Custom paragraph style for summaries**
+    summary_style = ParagraphStyle(
+        name="SummaryStyle",
+        fontSize=12,
+        fontName="Helvetica-Bold",
+        leading=18,
+        spaceBefore=6,
+        spaceAfter=6,
+        leftIndent=0,
+        rightIndent=0,
+        alignment=1  # Align left
+    )
+
     flowables = []
 
     for page_content in pages:
-        # Add summary paragraph
-        summary_paragraph = Paragraph(page_content['summary'], styles["Normal"])
-        flowables.append(summary_paragraph)
-        
-        # Create table for key terms and meanings
-        data = [["Term", "Meaning"]]  # Header row
-        for term, meaning in page_content['meanings'].items():
-            data.append([term, meaning])
-
-        # Define table style
-        table_style = TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), (0.9, 0.9, 0.9)),  # Header background
-            ('TEXTCOLOR', (0, 0), (-1, 0), (0, 0, 0)),  # Header text color
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),  # Align text left
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), (1, 1, 1)),  # Alternate row background
-            ('GRID', (0, 0), (-1, -1), 1, (0, 0, 0)),  # Grid lines
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # Vertical alignment
-        ])
-
-        # Define column widths and create table
-        col_widths = [2.5*inch, 4.5*inch]  # Adjust column widths as needed
-        table = Table(data, colWidths=col_widths)
-        table.setStyle(table_style)
-
-        # Add table to flowables
-        flowables.append(table)
-
-        # Add page break after each page's content
-        flowables.append(PageBreak())
-
-    # Build the PDF
-    doc.build(flowables)
     
 def main():
     st.title("PDF Summarizer and Key Term Extractor")
