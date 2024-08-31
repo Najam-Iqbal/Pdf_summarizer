@@ -3,6 +3,8 @@ import os
 import fitz
 import nltk
 import streamlit as st
+
+import PyPDF2
 from groq import Groq
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
