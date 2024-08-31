@@ -3,3 +3,4 @@ reportlab
 nltk 
 groq 
 streamlit
+PyPDF2
