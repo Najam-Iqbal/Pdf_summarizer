@@ -15,7 +15,7 @@ nltk.download('averaged_perceptron_tagger')
 nltk.download('wordnet')
 
 # Import Groq API
-GROQ_API_KEY=st.secret.key.groq_Api
+GROQ_API_KEY=st.secrets.key.groq_Api
 
 client = Groq(api_key=GROQ_API_KEY)
 
