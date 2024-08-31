@@ -67,7 +67,7 @@ def get_word_meaning(word):
     print(f"Word: {word}, Synsets: {synsets}")  # Debugging line
     if synsets:
         return synsets[0].definition()
-    else    
+    else:   
     return "No definition found."
 
 def process_text(text, use_llama=False, top_n=10):
